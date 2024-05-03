@@ -1,2 +1,2 @@
-rootProject.name = "bbpet-services"
+rootProject.name = "bbpet-webapi"
 

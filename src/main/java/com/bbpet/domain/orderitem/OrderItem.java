@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(schema = "orderman", name = "OrderItem")
+@Table(name = "OrderItem")
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class OrderItem {
 

@@ -14,19 +14,17 @@ import java.util.Map;
 
 @Transactional
 @Service("plainOrderService")
-public class PlainOrderService implements PlainEntityService {
+public class PlainOrderService {
 
-    private final OrderRepo orderRepo;
     private final EntityManager em;
 
     protected PlainOrderService(OrderRepo orderRepo, EntityManager em) {
-        this.orderRepo = orderRepo;
         this.em = em;
     }
 
     public List<? extends PlainEntity> findAllByParams(Map<String, String> paramMap) {
         var cb = em.getCriteriaBuilder();
-        var criteriaQuery = cb.createQuery();
+        var criteriaQuery = cb.createQuery(Order.class);
         var orderRoot = criteriaQuery.from(Order.class);
         criteriaQuery.select(orderRoot).distinct(true);
 
@@ -36,12 +34,20 @@ public class PlainOrderService implements PlainEntityService {
             var value = param.getValue();
             String attributeName = null;
             if ((attributeName = PlainOrder.getCriteriaColumnForParam(name).orElse(null)) != null) {
-                var predicate = cb.like(orderRoot.get(attributeName), "%" + value + "%");
+                var predicate = cb.like(orderRoot.get(attributeName).as(String.class), "%" + value + "%");
+                criteria = cb.and(criteria, predicate);
+            } else if ((attributeName = PlainOrder.getCriteriaRelationForParam(name).orElse(null)) != null) {
+                var predicate = cb.like(orderRoot.get(attributeName).get("id").as(String.class), "%" + value + "%");
                 criteria = cb.and(criteria, predicate);
             }
-
         }
 
+        criteriaQuery.where(criteria);
+        return em.createQuery(criteriaQuery).getResultStream().map(PlainOrder::from).toList();
+    }
+
+    public PlainEntity createOrder(Object id, Map<String, String> params) {
+        return null;
     }
 }
 

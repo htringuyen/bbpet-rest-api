@@ -58,7 +58,7 @@ public class TransactionCfg {
         jpaProps.put(Environment.FORMAT_SQL, false);
         jpaProps.put(Environment.STATEMENT_BATCH_SIZE, 30);
         jpaProps.put(Environment.USE_SQL_COMMENTS, false);
-        jpaProps.put(Environment.SHOW_SQL, false);
+        jpaProps.put(Environment.SHOW_SQL, true);
         return jpaProps;
     }
 

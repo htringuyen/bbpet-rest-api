@@ -3,32 +3,32 @@ use bbpet;
 -- Tables lacking columns, create additional columns later
 
 CREATE TABLE Employee (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     name VARCHAR(255)
 );
 
 CREATE TABLE Customer (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     name VARCHAR(255)
 );
 
 CREATE TABLE Shipping (-- Store all distant delivery info in the shipping table, no table like Delivery needed
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     status VARCHAR(50)
 );
 
 CREATE TABLE ServiceActivity (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     name VARCHAR(255)
 );
 
 CREATE TABLE Service (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     name VARCHAR(255)
 );
 
 CREATE TABLE Product (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     name VARCHAR(255),
 );
 
@@ -36,17 +36,19 @@ CREATE TABLE Product (
 -- Completed tables, will correct later if there are errors
 
 CREATE TABLE ProductBatch (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
+    productId INT,
     importDate DATETIME,
     quantity INT,
     priceEach DECIMAL(10,2),
     expiryDate DATE,
     manufacturingDate DATE,
-    remaining INT
+    remaining INT,
+    FOREIGN KEY (productId) references Product(id)
 );
 
 CREATE TABLE [Order] (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     createdTime DATETIME,
     deliveryAddress VARCHAR(255),
     status VARCHAR(50),
@@ -57,7 +59,7 @@ CREATE TABLE [Order] (
 );
 
 CREATE TABLE OrderItem (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     orderId INT,
     quantity INT,
     priceEach DECIMAL(10,2),
@@ -66,7 +68,7 @@ CREATE TABLE OrderItem (
 );
 
 CREATE TABLE ProductOrderItem (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     productId INT,
     shippingId INT,
     FOREIGN KEY (id) REFERENCES OrderItem(id),
@@ -83,7 +85,7 @@ CREATE TABLE ProductExport (
 );
 
 CREATE TABLE ServiceOrderItem (
-    id INT PRIMARY KEY,
+    id INT PRIMARY KEY IDENTITY (1, 1),
     serviceId INT,
     serviceActivityId INT,
     FOREIGN KEY (id) REFERENCES OrderItem(id),

@@ -3,7 +3,6 @@ package com.bbpet.domain.order;
 import com.bbpet.domain.PlainEntity;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -40,10 +39,16 @@ public record PlainOrder(Long id, LocalDateTime createdTime,
 
     public static Optional<String> getCriteriaRelationForParam(String param) {
         var relation = SUPPORTED_CRITERIA_RELATIONS.get(param);
-        if (param != null) {
+        if (relation != null) {
             return Optional.of(relation);
         }
         return Optional.empty();
+    }
+
+    public static PlainOrder from(Order order) {
+        return new PlainOrder(order.getId(), order.getCreatedTime(),
+                order.getDeliveryAddress(), OrderStatus.valueOf("SUCCESS"),
+                order.getCustomer().getId(), order.getEmployee().getId());
     }
 }
 

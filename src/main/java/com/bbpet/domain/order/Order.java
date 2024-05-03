@@ -19,7 +19,7 @@ import java.util.List;
                                 @ColumnResult(name = "orderId", type = Long.class),
                                 @ColumnResult(name = "status", type = String.class),
                                 @ColumnResult(name = "totalPrice", type = Double.class),
-                                @ColumnResult(name = "createdDate", type = LocalDateTime.class),
+                                @ColumnResult(name = "createdTime", type = LocalDateTime.class),
                                 @ColumnResult(name = "customerName", type = String.class),
                                 @ColumnResult(name = "deliveryAddress", type = String.class)
                         }
@@ -30,7 +30,7 @@ import java.util.List;
 @Data
 @ToString
 @Entity
-@Table(name = "[Order]", schema = "orderman")
+@Table(name = "[Order]")
 public class Order {
 
     @Id
@@ -46,15 +46,15 @@ public class Order {
     @Column(name = "status")
     protected String status;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "customerId")
     protected Customer customer;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "confirmedByEmployeeId")
     protected Employee employee;
 
-    @OneToMany(mappedBy = "order", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     protected List<OrderItem> orderItems;
 }
 

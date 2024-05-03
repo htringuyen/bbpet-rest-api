@@ -15,16 +15,11 @@ import java.util.List;
 public class OrderServiceImpl implements OrderService {
 
     private static final String GET_ALL_VIEWS_NATIVE_QUERY = """
-            SELECT o.id as orderId, status, orderman.getTotalOrderPrice(o.id) as totalPrice, createdTime,
+            SELECT o.id as orderId, status, dbo.getTotalOrderPrice(o.id) as totalPrice, createdTime,
                    c.name as customerName, deliveryAddress
-            FROM orderman.[Order] o
-            LEFT JOIN customerman.Customer c
+            FROM [Order] o
+            LEFT JOIN Customer c
             ON o.customerId = c.id
-            """;
-
-    private static final String ALL_ORDER_BY_NATIVE_QUERY = """
-            SELECT id, createdDate, deliveryAddress, status
-            FROM orderman.[Order]
             """;
 
     private final OrderRepo orderRepo;
@@ -48,3 +43,40 @@ public class OrderServiceImpl implements OrderService {
                 .getResultList();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

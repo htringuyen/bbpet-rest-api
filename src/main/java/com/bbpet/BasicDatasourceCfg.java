@@ -12,7 +12,7 @@ import org.springframework.context.annotation.PropertySource;
 import javax.sql.DataSource;
 
 @Configuration
-@PropertySource("classpath:db/jdbc.properties")
+@PropertySource("classpath:db/db.properties")
 public class BasicDatasourceCfg {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicDatasourceCfg.class);
 

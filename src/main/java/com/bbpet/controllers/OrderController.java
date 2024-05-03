@@ -1,13 +1,10 @@
 package com.bbpet.controllers;
 
-import com.bbpet.domain.order.Order;
 import com.bbpet.domain.order.OrderView;
 import com.bbpet.services.OrderService;
-import jakarta.servlet.ServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -26,15 +23,9 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @RequestMapping(path = {"", "/"}, method = RequestMethod.GET)
-    @ResponseStatus(HttpStatus.OK)
-    public List<Order> all() {
-        return orderService.findAll();
-    }
-
     @RequestMapping(path = {"/view"}, method = RequestMethod.GET)
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderView> getOrderViewList() {
+    public List<OrderView> getOrderViews() {
         return orderService.findAllViews();
     }
 }

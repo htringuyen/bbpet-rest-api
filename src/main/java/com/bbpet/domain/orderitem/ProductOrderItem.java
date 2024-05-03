@@ -11,7 +11,7 @@ import lombok.ToString;
 @Data
 @ToString
 @Entity
-@Table(schema = "orderman", name = "ProductOrderItem")
+@Table(name = "ProductOrderItem")
 public class ProductOrderItem extends OrderItem {
 
     @ManyToOne
