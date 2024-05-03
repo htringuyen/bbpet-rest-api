@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Copy a file from the source directory to the destination directory
-cp $PROJ_HOME/db.properties $PROJ_HOME/src/main/resources/db
+# cp $PROJ_HOME/db.properties $PROJ_HOME/src/main/resources/db
 
 # Change to the directory containing the Gradle project
 cd $PROJ_HOME

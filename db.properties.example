@@ -1,4 +1,0 @@
-jdbc.driverClassName=com.microsoft.sqlserver.jdbc.SQLServerDriver
-jdbc.url=jdbc:sqlserver://128.128.128.22:1433;databaseName=bbpet;encrypt=false;trustServerCertificate=true
-jdbc.username=sa
-jdbc.password=secure

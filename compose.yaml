@@ -1,0 +1,42 @@
+name: bbpet-webapi
+services:
+  tomcat:
+    build:
+      context: ./docker/tomcat
+      dockerfile: Dockerfile
+    image: tomcat-build1
+    container_name: bbpet-tomcat
+    volumes:
+      - type: bind
+        source: .
+        target: /home/project
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mssql
+    networks:
+      - bbpet-network
+
+  mssql:
+    build:
+      context: ./docker/mssql
+      dockerfile: Dockerfile
+    image: mssql-build1
+    container_name: bbpet-mssql
+    user: root
+    volumes:
+      - type: bind
+        source: ./sql
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "1433:1433"
+    environment:
+      - SA_PASSWORD=Abcd@1234
+      - ACCEPT_EULA=Y
+    networks:
+      - bbpet-network
+
+networks:
+  bbpet-network:
+    driver: bridge
+
