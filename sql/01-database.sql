@@ -1,3 +1,6 @@
+USE master;
+GO
+
 -- Check if the bbpet database exists
 IF EXISTS (SELECT * FROM sys.databases WHERE name = 'bbpet')
 BEGIN
@@ -6,6 +9,15 @@ BEGIN
     DROP DATABASE bbpet;
 END
 
+DROP DATABASE bbpet;
+GO
+
 -- Create a new bbpet database
 CREATE DATABASE bbpet;
+GO
+
+USE master;
+GO
+
+ALTER LOGIN sa WITH DEFAULT_DATABASE = bbpet;
 GO

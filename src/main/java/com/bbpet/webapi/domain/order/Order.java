@@ -16,7 +16,7 @@ import java.util.List;
                 @ConstructorResult(
                         targetClass = OrderView.class,
                         columns = {
-                                @ColumnResult(name = "orderId", type = Long.class),
+                                @ColumnResult(name = "id", type = Long.class),
                                 @ColumnResult(name = "status", type = String.class),
                                 @ColumnResult(name = "totalPrice", type = Double.class),
                                 @ColumnResult(name = "createdTime", type = LocalDateTime.class),
@@ -30,7 +30,7 @@ import java.util.List;
 @Data
 @ToString
 @Entity
-@Table(name = "[Order]")
+@Table(name = "[Order]", schema = "dbo")
 public class Order {
 
     @Id
@@ -43,8 +43,9 @@ public class Order {
     @Column(name = "deliveryAddress")
     protected String deliveryAddress;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    protected String status;
+    protected OrderStatus status;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "customerId")

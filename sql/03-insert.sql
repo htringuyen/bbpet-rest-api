@@ -50,26 +50,27 @@ SET IDENTITY_INSERT ProductBatch OFF;
 -- Insert sample data into order management schema
 SET IDENTITY_INSERT [Order] ON;
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (1, '2023-03-10 09:00:00', '123 Main St, Anytown, USA', 'Completed', 1, 1);
+VALUES (1, '2023-03-10 09:00:00', '123 Main St, Anytown, USA', 'SUCCESS', 1, 1);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (2, '2023-03-11 14:30:00', '456 Elm St, Anytown, USA', 'In Progress', 2, 2);
+VALUES (2, '2023-03-11 14:30:00', '456 Elm St, Anytown, USA', 'PENDING', 2, 2);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (3, '2023-03-12 10:00:00', '789 Oak St, Anytown, USA', 'Completed', 3, 3);
+VALUES (3, '2023-03-12 10:00:00', '789 Oak St, Anytown, USA', 'SUCCESS', 3, 3);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (4, '2023-03-13 15:30:00', '321 Pine St, Anytown, USA', 'In Progress', 4, 4);
+VALUES (4, '2023-03-13 15:30:00', '321 Pine St, Anytown, USA', 'PENDING', 4, 4);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (5, '2023-03-14 11:00:00', '654 Maple St, Anytown, USA', 'Completed', 5, 1);
+VALUES (5, '2023-03-14 11:00:00', '654 Maple St, Anytown, USA', 'SUCCESS', 5, 1);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (6, '2023-03-15 16:30:00', '987 Birch St, Anytown, USA', 'In Progress', 1, 2);
+VALUES (6, '2023-03-15 16:30:00', '987 Birch St, Anytown, USA', 'PENDING', 1, 2);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (7, '2023-03-16 10:00:00', '246 Cedar St, Anytown, USA', 'Completed', 2, 3);
+VALUES (7, '2023-03-16 10:00:00', '246 Cedar St, Anytown, USA', 'SUCCESS', 2, 3);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (8, '2023-03-17 15:30:00', '852 Willow St, Anytown, USA', 'In Progress', 3, 4);
+VALUES (8, '2023-03-17 15:30:00', '852 Willow St, Anytown, USA', 'PENDING', 3, 4);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (9, '2023-03-18 11:00:00', '513 Cherry St, Anytown, USA', 'Completed', 4, 1);
+VALUES (9, '2023-03-18 11:00:00', '513 Cherry St, Anytown, USA', 'SUCCESS', 4, 1);
 INSERT INTO [Order] (id, createdTime, deliveryAddress, status, customerId, confirmedByEmployeeId)
-VALUES (10, '2023-03-19 16:30:00', '369 Magnolia St, Anytown, USA', 'In Progress', 5, 2);
+VALUES (10, '2023-03-19 16:30:00', '369 Magnolia St, Anytown, USA', 'PENDING', 5, 2);
 SET IDENTITY_INSERT [Order] OFF;
+
 
 -- Insert sample data into order items
 SET IDENTITY_INSERT OrderItem ON;

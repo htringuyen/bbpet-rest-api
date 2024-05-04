@@ -2,8 +2,8 @@ package com.bbpet.webapi.domain.order;
 
 import java.time.LocalDateTime;
 
-
-public record OrderView(Long orderId, String status,
-                        Double totalPrice, LocalDateTime createdTime,
+public record OrderView(Long id, OrderStatus status,
+                        Double price, LocalDateTime createdTime,
                         String customerName, String deliveryAddress) {
+
 }

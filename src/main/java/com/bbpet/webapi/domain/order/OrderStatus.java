@@ -8,17 +8,19 @@ public enum OrderStatus {
 
     CONFIRMED(3),
 
-    SUCCESS(4)
+    NOT_ACCEPTED(3),
+
+    SUCCESS(4),
+    CANCELED(4),
     ;
 
-    private final int ordinal;
+    private final int stage;
 
-    OrderStatus(int ordinal) {
-        this.ordinal = ordinal;
+    OrderStatus(int stage) {
+        this.stage = stage;
     }
 
-    public int getOrdinal() {
-        return ordinal;
+    public int getStage() {
+        return stage;
     }
-
 }

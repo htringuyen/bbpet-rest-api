@@ -21,7 +21,8 @@ CREATE TABLE Shipping (-- Store all distant delivery info in the shipping table,
 
 CREATE TABLE ServiceActivity (
     id INT PRIMARY KEY IDENTITY (1, 1),
-    name VARCHAR(255)
+    name VARCHAR(255),
+    status VARCHAR(50)
 );
 
 CREATE TABLE Service (
