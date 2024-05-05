@@ -1,0 +1,19 @@
+name: bbpet-mssql-dev
+services:
+  mssql:
+    build:
+      context: ./docker/mssql
+      dockerfile: Dockerfile
+    image: mssql-build1
+    container_name: bbpet-mssql-dev
+    user: root
+    volumes:
+      - type: bind
+        source: ./sql/dev
+        target: /docker-entrypoint-initdb.d
+    ports:
+      - "1433:1433"
+    environment:
+      - SA_PASSWORD=Abcd@1234
+      - ACCEPT_EULA=Y
+
