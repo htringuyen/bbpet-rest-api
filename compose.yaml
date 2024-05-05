@@ -26,7 +26,7 @@ services:
     user: root
     volumes:
       - type: bind
-        source: ./sql
+        source: ./sql/webdb
         target: /docker-entrypoint-initdb.d
     ports:
       - "1433:1433"
