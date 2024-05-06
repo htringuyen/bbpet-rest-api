@@ -1,7 +1,7 @@
 package com.bbpet.webapi.services.dbexpose;
 
 import com.bbpet.webapi.config.TransactionCfg;
-import com.bbpet.webapi.domain.order.Order;
+import com.bbpet.webapi.domain.shopping.Order;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

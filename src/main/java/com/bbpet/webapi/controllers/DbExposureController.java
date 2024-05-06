@@ -1,6 +1,5 @@
 package com.bbpet.webapi.controllers;
 
-import com.bbpet.webapi.domain.order.Order;
 import com.bbpet.webapi.services.dbexpose.PlainEntityTableService;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +19,11 @@ public class DbExposureController {
     @RequestMapping(value = "/{entity}", method = RequestMethod.GET)
     public List<Map<String, String>> getAllOrSearch(@PathVariable("entity") String entity,
                                                     @RequestParam Map<String, String> paramMap) {
-        if (entity.equals("order")) {
+        /*if (entity.equals("order")) {
             return tableService.findAllByParams(paramMap, Order.class);
         } else {
             return null;
-        }
+        }*/
+        return null;
     }
 }

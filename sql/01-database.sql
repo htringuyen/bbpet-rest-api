@@ -9,15 +9,20 @@ BEGIN
     DROP DATABASE bbpet;
 END
 
-DROP DATABASE bbpet;
-GO
-
 -- Create a new bbpet database
 CREATE DATABASE bbpet;
 GO
-
-USE master;
-GO
-
-ALTER LOGIN sa WITH DEFAULT_DATABASE = bbpet;
-GO
+--
+-- USE master;
+-- GO
+--
+-- ALTER LOGIN sa WITH DEFAULT_DATABASE = bbpet;
+-- GO
+--
+-- USE bbpet;
+-- GO
+--
+-- -- For generating random numbers
+-- CREATE TABLE RandomSeed (
+--     id INT IDENTITY(1, 1) PRIMARY KEY
+-- );

@@ -1,7 +1,6 @@
-package com.bbpet.webapi.services;
+package com.bbpet.webapi.services.shopping;
 
 import com.bbpet.webapi.config.TransactionCfg;
-import com.bbpet.webapi.services.order.OrderService;
 import com.bbpet.webapi.util.SortUtils;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -28,14 +27,6 @@ public class OrderServiceTest {
     }
 
     @Test
-    void testNativeMappings() {
-        orderService.findAllViews()
-                .forEach(o -> LOGGER.info(o.toString()));
-
-        //orderService.findAllByNativeQuery();
-    }
-
-    @Test
     void testFindAllOrders() {
         orderService.findAll()
                 .forEach(o -> LOGGER.info(o.toString()));
@@ -51,24 +42,23 @@ public class OrderServiceTest {
 
         var page = orderService.findAllViewsWithCriteria(
                 null, null, null, null,
-                        null, null, null,
-                PageRequest.of(0, 9, sort));
-        assertEquals(9, page.getContent().size());
+                        null, null, null,null,
+                PageRequest.of(10, 10, sort));
+        assertEquals(3, page.getContent().size());
 
         page.forEach(o -> LOGGER.info(o.toString()));
 
         // do again for status = 'S' and beforeDate = 2023-03-18 and afterDate = 2023-03-11
         page = orderService.findAllViewsWithCriteria(
-                null, "S", null, null,
-                null,
-                java.time.LocalDate.of(2023, 3, 18),
-                java.time.LocalDate.of(2023, 3, 11),
-                PageRequest.of(1, 2, sort));
-        assertEquals(1, page.getContent().size());
+                null, "CAN", null, null,
+                null, null,
+                java.time.LocalDate.of(2022, 12,9),
+                java.time.LocalDate.of(2023, 10, 17),
+                PageRequest.of(0, 10, sort));
+
+        assertEquals(8, page.getContent().size());
         page.forEach(o -> LOGGER.info(o.toString()));
     }
-
-
 }
 
 
