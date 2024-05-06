@@ -683,7 +683,7 @@ INSERT INTO bbpet.dbo.Sourcing (id, available, reason) VALUES (394, 1, N'Order 1
 SET IDENTITY_INSERT bbpet.dbo.Sourcing OFF;
 
 
-SET IDENTITY_INSERT bbpet.dbo.InventorySourcing ON;
+
 INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantity, canceled) VALUES (1, 99, 4, null);
 INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantity, canceled) VALUES (1, 158, 2, null);
 INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantity, canceled) VALUES (1, 185, 2, null);
@@ -923,7 +923,7 @@ INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantit
 INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantity, canceled) VALUES (59, 88, 9, null);
 INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantity, canceled) VALUES (59, 130, 8, null);
 INSERT INTO bbpet.dbo.InventorySourcing (productInventoryId, sourcingId, quantity, canceled) VALUES (59, 342, 9, null);
-SET IDENTITY_INSERT bbpet.dbo.InventorySourcing OFF;
+
 
 
 
