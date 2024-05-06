@@ -3,7 +3,7 @@ USE bbpet;
 GO
 
 -- create function that return a table
-CREATE FUNCTION GetAvailableProductInventory(@productId INT, @requiredQuantity INT, @atTime DATETIME)
+CREATE FUNCTION getAvailableInventory(@productId INT, @requiredQuantity INT, @atTime DATETIME)
 RETURNS TABLE
 AS RETURN
 (

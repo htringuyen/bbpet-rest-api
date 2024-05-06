@@ -1,10 +1,8 @@
 package com.bbpet.webapi.repos;
 
 import com.bbpet.webapi.domain.customer.Customer_;
-import com.bbpet.webapi.domain.order.Order;
-import com.bbpet.webapi.domain.order.OrderStatus;
-import com.bbpet.webapi.domain.order.OrderView;
-import com.bbpet.webapi.domain.order.Order_;
+import com.bbpet.webapi.domain.shopping.OrderView;
+import com.bbpet.webapi.domain.shopping.Order_;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.*;
 import org.springframework.data.domain.Page;
@@ -12,33 +10,31 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
+import com.bbpet.webapi.domain.shopping.Order;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.SequencedMap;
 
 @Repository
-public class AdvancedOrderRepository {
-    private static final String GET_ORDER_PRICE_FUNCTION = "dbo.getOrderPrice";
+public class OrderViewQuery {
 
-    private static final ArrayList<String> SUPPORTED_ORDER_PROPERTIES =
-            new ArrayList<>(List.of("id", "status", "price", "createdTime", "customerName", "deliveryAddress"));
+    private static final String GET_ORDER_PRICE_FUNCTION = "dbo.getOrderPrice";
 
     private final EntityManager em;
 
-    public AdvancedOrderRepository(EntityManager em) {
+    public OrderViewQuery(EntityManager em) {
         this.em = em;
     }
 
-    public Page<OrderView> findOrderViews(Long id, String status, Long customerId,
-                                         String customerName, String deliveryAddress,
-                                         LocalDate beforeDate, LocalDate afterDate,
-                                          Pageable pageable) {
+    public Page<OrderView> findOrderViews(
+            Long id, String status,
+            Long customerId, String customerName,
+            String deliveryAddress, String phoneNumber,
+            LocalDate afterDate, LocalDate beforeDate,
+            Pageable pageable) {
 
         var cb = em.getCriteriaBuilder();
-        var dateQuery = cb.createQuery(Object[].class);
+        var dateQuery = cb.createQuery(OrderView.class);
         var orderRoot = dateQuery.from(Order.class);
 
         // build selections
@@ -63,11 +59,14 @@ public class AdvancedOrderRepository {
         // select customer delivery address
         selectionList.add(orderRoot.get(Order_.DELIVERY_ADDRESS));
 
+        // select phone number
+        selectionList.add(orderRoot.get(Order_.PHONE_NUMBER));
+
         dateQuery.multiselect(selectionList.toArray(new Selection[0]));
 
         // build search criteria
         var dataCriteria = buildSearchCriteria(id, status, customerId, customerName,
-                deliveryAddress, beforeDate, afterDate, cb, orderRoot);
+                deliveryAddress, phoneNumber, beforeDate, afterDate, cb, orderRoot);
 
         dateQuery.where(dataCriteria);
 
@@ -98,26 +97,12 @@ public class AdvancedOrderRepository {
         query.setFirstResult((int) pageable.getOffset());
         query.setMaxResults(pageable.getPageSize());
 
-        var orderViews = query.getResultStream()
-                .map(row -> new OrderView(
-                        (Long) row[0],
-                        (OrderStatus) row[1],
-                        (Double) row[2],
-                        (LocalDateTime) row[3],
-                        (String) row[4],
-                        (String) row[5]
-                ))
-                .toList();
+        var orderViews = query.getResultList();
 
-        // count total records
-        var countQuery = cb.createQuery(Long.class);
-        countQuery.select(cb.count(countQuery.from(Order.class)));
-        var countCriteria = buildSearchCriteria(id, status, customerId, customerName,
-                deliveryAddress, beforeDate, afterDate, cb, countQuery.from(Order.class));
-        countQuery.where(countCriteria);
-        var count = em.createQuery(countQuery).getSingleResult();
+        var totalViews = countTotalViews(id, status, customerId, customerName,
+                deliveryAddress, phoneNumber, beforeDate, afterDate);
 
-        return new PageImpl<>(orderViews, pageable, count);
+        return new PageImpl<>(orderViews, pageable, totalViews);
     }
 
 
@@ -125,10 +110,12 @@ public class AdvancedOrderRepository {
         return "%" + value + "%";
     }
 
-    private Predicate buildSearchCriteria(Long orderId, String status, Long customerId,
-                                          String customerName, String deliveryAddress,
-                                          LocalDate beforeDate, LocalDate afterDate,
-                                          CriteriaBuilder cb, Root<Order> orderRoot) {
+    private Predicate buildSearchCriteria(
+            Long orderId, String status, Long customerId, String customerName,
+            String deliveryAddress, String phoneNumber,
+            LocalDate beforeDate, LocalDate afterDate,
+            CriteriaBuilder cb, Root<Order> orderRoot) {
+
         var criteria = cb.conjunction();
         if (orderId != null) {
             criteria = cb.and(criteria, cb.equal(orderRoot.get(Order_.ID), orderId));
@@ -150,6 +137,10 @@ public class AdvancedOrderRepository {
             criteria = cb.and(criteria, cb.like(orderRoot.get(Order_.DELIVERY_ADDRESS), toWildCard(deliveryAddress)));
         }
 
+        if (phoneNumber != null) {
+            criteria = cb.and(criteria, cb.like(orderRoot.get(Order_.PHONE_NUMBER), toWildCard(phoneNumber)));
+        }
+
         if (beforeDate != null) {
             criteria = cb.and(criteria, cb.lessThanOrEqualTo(orderRoot.get(Order_.CREATED_TIME), beforeDate));
         }
@@ -159,6 +150,25 @@ public class AdvancedOrderRepository {
         }
 
         return criteria;
+    }
+
+    private int countTotalViews(
+            Long id, String status, Long customerId, String customerName,
+            String deliveryAddress, String phoneNumber,
+            LocalDate beforeDate, LocalDate afterDate) {
+
+        var cb = em.getCriteriaBuilder();
+
+        var countQuery = cb.createQuery(Long.class);
+
+        countQuery.select(cb.count(countQuery.from(Order.class)));
+
+        var countCriteria = buildSearchCriteria(id, status, customerId, customerName, deliveryAddress,
+                phoneNumber, beforeDate, afterDate, cb, countQuery.from(Order.class));
+
+        countQuery.where(countCriteria);
+
+        return em.createQuery(countQuery).getSingleResult().intValue();
     }
 }
 

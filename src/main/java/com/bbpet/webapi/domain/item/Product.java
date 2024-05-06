@@ -1,4 +1,4 @@
-package com.bbpet.webapi.domain.employee;
+package com.bbpet.webapi.domain.item;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -6,8 +6,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "Employee")
-public class Employee {
+@Table(name = "Product")
+public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,10 +19,11 @@ public class Employee {
     private String name;
 
     @NotNull
-    @Column(name = "address")
-    private String address;
+    @Column(name = "description")
+    private String description;
 
     @NotNull
-    @Column(name = "phoneNumber")
-    private String phoneNumber;
+    @OneToOne
+    @JoinColumn(name = "shopItemId")
+    private ShopItem shopItem;
 }
