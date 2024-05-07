@@ -238,6 +238,6 @@ VALUES
     (17, 'Robert Miller', '135 Cedar St, Mesa, AZ 85201', '480-555-0017', 0),
     (18, 'Michael Taylor', '246 Cherry St, Sparks, NV 89431', '775-555-0018', 0),
     (19, 'Steve Clark', '864 Walnut St, Long Beach, CA 90802', '562-555-0019', 0),
-    (20, 'Katherine White', '579 Hickory St, Bend, OR 97701', '541-555-0020', 0)
+    (20, 'Katherine White', '579 Hickory St, Bend, OR 97701', '541-555-0020', 0);
 ;
 SET IDENTITY_INSERT Customer OFF;

@@ -13,7 +13,7 @@ SET @seed = 42;
 -- properties
 DECLARE @discountMax DECIMAL(10, 2) = 0.2;
 
-DECLARE @orderPerCustomerMax INT = 10;
+DECLARE @orderPerCustomerMax INT = 15;
 
 DECLARE @inStoreAddress VARCHAR(255) = 'In-store, 123 Goldenwest St, CA 92683';
 
@@ -114,9 +114,18 @@ BEGIN
         INSERT INTO [Order] (createdTime, deliveryAddress, phoneNumber, status, customerId, employeeId)
         VALUES (@orderTime, @orderAddress, @phoneNumber, @orderStatus, @customerId, @employeeId);
 
+        -- if insert failed, throw an error
+        IF @@ERROR <> 0
+        BEGIN
+            THROW 50000, 'Failed to insert order', 1;
+        END
+
         -- get the id of the order
         DECLARE @orderId INT;
         SELECT @orderId = SCOPE_IDENTITY();
+
+        --print order id
+        -- PRINT 'Order ' + CAST(@orderId AS VARCHAR(255)) + ' created';
 
 
         -- ********************************************************************
@@ -125,7 +134,7 @@ BEGIN
 
         -- we need a shared delivery record for the ordered products
         -- let prepare it
-        DECLARE @deliveryId INT; -- use it for creating of order items later
+        DECLARE @deliveryId INT = NULL; -- use it for creating of order items later
 
         -- only orders with status DELIVERING, CANCELED, SUCCESS have delivery
         IF @orderStatus IN ('DELIVERING', 'CANCELED', 'SUCCESS')
@@ -162,6 +171,9 @@ BEGIN
             DECLARE @deliveryEndLimit DATETIME = DATEADD(dd, 3, @deliveryStartTime);
             EXEC dbo.GenerateRandomDateTime
                  @deliveryStartTime, @deliveryEndLimit, @seed, @deliveryEndTime OUTPUT;
+
+            -- print prodcut delivery insert for orderId
+            -- PRINT 'Order ' + CAST(@orderId AS VARCHAR(255)) + ' product delivery created';
 
             -- create delivery record with: status, startTime, endTime, reason
             INSERT INTO Delivery (status, startTime, endTime, reason)
@@ -308,7 +320,7 @@ BEGIN
             -- create delivery record for service item
 
             -- we need a delivery record for each service item
-            DECLARE @serviceDeliveryId INT; -- use it for creating of the order item later
+            DECLARE @serviceDeliveryId INT = NULL; -- use it for creating of the order item later
 
             -- only orders with status DELIVERING, CANCELED, SUCCESS have delivery
             IF @orderStatus IN ('DELIVERING', 'CANCELED', 'SUCCESS')
