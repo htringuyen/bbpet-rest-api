@@ -26,7 +26,8 @@ DECLARE @Summary TABLE (
     meanPendingHours DECIMAL(20, 2)
 )
 
-DECLARE @batchSize INT = 50 * 24 / @hourInterval
+DECLARE @batchSize INT;
+SET @batchSize = IIF(50 * 24 / @hourInterval >= 1, 50 * 24 / @hourInterval, 1);
 
 DECLARE @orderId INT, @orderTime DATETIME, @orderStatus VARCHAR;
 
@@ -43,15 +44,6 @@ DECLARE OrderCursor CURSOR FOR
         AND O.createdTime >= @fromTime
         AND O.createdTime <= @toTime
     ORDER BY O.createdTime
-
-/*DECLARE OrderCursor CURSOR FOR
-SELECT
-    O.id as orderId,
-    O.createdTime as orderTime,
-    O.status as orderStatus
-FROM
-    [Order] O
-ORDER BY createdTime*/
 
 
 OPEN OrderCursor;
