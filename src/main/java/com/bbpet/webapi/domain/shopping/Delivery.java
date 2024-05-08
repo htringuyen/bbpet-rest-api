@@ -1,6 +1,7 @@
 package com.bbpet.webapi.domain.shopping;
 
 import com.bbpet.webapi.domain.Staging;
+import com.bbpet.webapi.services.shopping.IntCount;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -13,30 +14,69 @@ import java.util.List;
 @NamedNativeQueries({
         @NamedNativeQuery(name = "getDeliverablesToProcess", query = """
                 EXEC getDeliverablesToProcess :fromTime, :toTime, :fromPrice, :toPrice, :searchColumn,
-                                            :searchValue, :sortColumn, :sortOrder
+                                            :searchValue, :sortColumn, :sortOrder, :rowsOffset, :rowsFetch
                 """, resultSetMapping = "deliverableMapping"),
 })
 
-@SqlResultSetMapping(
-        name = "deliverableMapping",
-        classes = {
-                @ConstructorResult(
-                        targetClass = Deliverable.class,
-                        columns = {
-                                @ColumnResult(name = "orderId", type = Long.class),
-                                @ColumnResult(name = "itemType", type = String.class),
-                                @ColumnResult(name = "orderItemIds", type = String.class),
-                                @ColumnResult(name = "totalPrice", type = Double.class),
-                                @ColumnResult(name = "createdTime", type = LocalDateTime.class),
-                                @ColumnResult(name = "customerName", type = String.class),
-                                @ColumnResult(name = "address", type = String.class),
-                                @ColumnResult(name = "phoneNumber", type = String.class),
-                                @ColumnResult(name = "deliveryStatus", type = String.class),
-                                @ColumnResult(name = "sourceLocation", type = String.class),
-                        }
-                )
-        }
-)
+@NamedStoredProcedureQueries({
+        @NamedStoredProcedureQuery(
+                name = "getDeliverablesToProcess",
+                procedureName = "getDeliverablesToProcess",
+                parameters = {
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "fromTime", type = LocalDateTime.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "toTime", type = LocalDateTime.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "fromPrice", type = Double.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "toPrice", type = Double.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "searchColumn", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "searchValue", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "sortColumn", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "sortOrder", type = String.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "rowsOffset", type = Integer.class),
+                        @StoredProcedureParameter(mode = ParameterMode.IN, name = "rowsFetch", type = Integer.class),
+                        @StoredProcedureParameter(mode = ParameterMode.OUT, name = "totalRows", type = Integer.class)
+                }
+                //, resultClasses = {IntCount.class, Deliverable.class}
+                , resultSetMappings = {"deliverableMapping"}
+        )
+})
+
+
+@SqlResultSetMappings({
+        @SqlResultSetMapping(
+                name = "intCountMapping",
+                classes = {
+                        @ConstructorResult(
+                                targetClass = IntCount.class,
+                                columns = {
+                                        @ColumnResult(name = "totalElements", type = Integer.class),
+                                }
+                        )
+                }
+        ),
+
+
+        @SqlResultSetMapping(
+                name = "deliverableMapping",
+                classes = {
+                        @ConstructorResult(
+                                targetClass = Deliverable.class,
+                                columns = {
+                                        @ColumnResult(name = "orderId", type = Long.class),
+                                        @ColumnResult(name = "itemType", type = String.class),
+                                        @ColumnResult(name = "orderItemIds", type = String.class),
+                                        @ColumnResult(name = "totalPrice", type = Double.class),
+                                        @ColumnResult(name = "createdTime", type = LocalDateTime.class),
+                                        @ColumnResult(name = "customerName", type = String.class),
+                                        @ColumnResult(name = "address", type = String.class),
+                                        @ColumnResult(name = "phoneNumber", type = String.class),
+                                        @ColumnResult(name = "deliveryStatus", type = String.class),
+                                        @ColumnResult(name = "sourceLocation", type = String.class),
+                                }
+                        )
+                }
+        )
+})
+
 
 @Data
 @Entity

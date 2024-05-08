@@ -1,17 +1,32 @@
-USE bbpet;
-GO;
-
 CREATE PROCEDURE getDeliverablesToProcess
-    @fromTime DATETIME = '2020-01-01T00:00:00',
+    @fromTime DATETIME = '1970-01-01T00:00:00',
     @toTime DATETIME = '2050-01-01T00:00:00',
     @fromPrice DECIMAL(20, 2) = 0.00,
     @toPrice DECIMAL(20, 2) = 999999.00,
     @searchColumn VARCHAR(255) = 'N/A',
     @searchValue VARCHAR(255) = 'N/A',
     @sortColumn VARCHAR(255) = 'createdTime',
-    @sortOrder VARCHAR(255) = 'DESC'
+    @sortOrder VARCHAR(255) = 'DESC',
+    @rowsOffset INT = 0,
+    @rowsFetch INT = 10,
+    @totalRows INT OUTPUT
 AS
 BEGIN
+
+    SET NOCOUNT ON;
+
+    DECLARE @Deliverables TABLE (
+        orderId BIGINT,
+        itemType VARCHAR(255),
+        orderItemIds VARCHAR(MAX),
+        totalPrice DECIMAL(20, 2),
+        createdTime DATETIME,
+        customerName VARCHAR(255),
+        address VARCHAR(255),
+        phoneNumber VARCHAR(255),
+        deliveryStatus VARCHAR(255),
+        sourceLocation VARCHAR(255)
+    );
 
     WITH OrderItemInfo AS (
         SELECT
@@ -39,6 +54,7 @@ BEGIN
           AND OD.createdTime BETWEEN @fromTime AND @toTime
     )
 
+    INSERT INTO @Deliverables (orderId, itemType, orderItemIds, totalPrice, createdTime, customerName, address, phoneNumber, deliveryStatus, sourceLocation)
     SELECT *
     FROM (
              SELECT
@@ -85,7 +101,6 @@ BEGIN
              HAVING
                  SUM(OII.quantity * OII.priceEach * (1 - OII.discount)) BETWEEN @fromPrice AND @toPrice
          ) AS Result
-
     WHERE
         CASE @searchColumn
             WHEN 'orderId' THEN CAST(orderId AS VARCHAR(255))
@@ -100,6 +115,10 @@ BEGIN
             ELSE 'N/A'
             END LIKE '%' + @searchValue + '%'
 
+    SET @totalRows = @@ROWCOUNT;
+
+    SELECT *
+    FROM @Deliverables
     ORDER BY
         CASE WHEN @sortColumn = 'orderId' AND @sortOrder = 'ASC' THEN orderId END ASC,
         CASE WHEN @sortColumn = 'orderId' AND @sortOrder = 'DESC' THEN orderId END DESC,
@@ -127,17 +146,6 @@ BEGIN
 
         CASE WHEN @sortColumn = 'sourceLocation' AND @sortOrder = 'ASC' THEN sourceLocation END ASC,
         CASE WHEN @sortColumn = 'sourceLocation' AND @sortOrder = 'DESC' THEN sourceLocation END DESC
+    OFFSET @rowsOffset ROWS
+    FETCH NEXT @rowsFetch ROWS ONLY;
 END
-go
-
-
-
-
-
-
-
-
-
-
-
-

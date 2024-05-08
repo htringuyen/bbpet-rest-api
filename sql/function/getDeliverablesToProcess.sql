@@ -9,7 +9,7 @@ CREATE PROCEDURE getDeliverablesToProcess
     @searchColumn VARCHAR(255) = 'N/A',
     @searchValue VARCHAR(255) = 'N/A',
     @sortColumn VARCHAR(255) = 'createdTime',
-    @sortOrder VARCHAR(255) = 'DESC'
+    @sortOrder VARCHAR(255) = 'DESC',
 AS
 BEGIN
 
@@ -127,4 +127,7 @@ BEGIN
 
         CASE WHEN @sortColumn = 'sourceLocation' AND @sortOrder = 'ASC' THEN sourceLocation END ASC,
         CASE WHEN @sortColumn = 'sourceLocation' AND @sortOrder = 'DESC' THEN sourceLocation END DESC
+
+    OFFSET 0 ROWS
+    FETCH NEXT 10 ROWS ONLY
 END
