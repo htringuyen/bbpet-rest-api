@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "order")
+@RequestMapping(path = "/api/v1/order")
 public class OrderController {
 
     final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
