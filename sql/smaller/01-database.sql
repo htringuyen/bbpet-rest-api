@@ -8,6 +8,7 @@ BEGIN
     ALTER DATABASE bbpet SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE bbpet;
 END
+GO
 
 -- Create a new bbpet database
 CREATE DATABASE bbpet;

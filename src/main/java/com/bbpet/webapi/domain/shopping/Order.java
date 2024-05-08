@@ -3,6 +3,8 @@ package com.bbpet.webapi.domain.shopping;
 import com.bbpet.webapi.domain.Staging;
 import com.bbpet.webapi.domain.customer.Customer;
 import com.bbpet.webapi.domain.employee.Employee;
+import com.bbpet.webapi.domain.report.IntervalReport;
+import com.bbpet.webapi.domain.report.OverviewReport;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -10,6 +12,67 @@ import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "getReportByIntervals", query = """
+                SELECT *
+                FROM dbo.getReportByIntervals (:intervalHours, :fromTime, :toTime)
+                ORDER BY intervalNumber
+                """, resultSetMapping = "intervalReportMapping"),
+
+
+        @NamedNativeQuery(name = "getOverviewReport", query = """
+                SELECT
+                    SUM(I.quantity * I.priceEach * (1 - discount)) AS totalRevenue,
+                    SUM(IIF(I.type = 'PRODUCT', I.quantity, 0)) AS productsSold,
+                    SUM(IIF(I.type = 'SERVICE', I.quantity, 0)) AS servicesSold,
+                    COUNT(DISTINCT O.customerId) AS customerCount
+                FROM
+                    [Order] O
+                    LEFT JOIN OrderItem I ON I.orderId = O.id
+                WHERE O.status = 'SUCCESS'
+                """, resultSetMapping = "overviewReportMapping")
+})
+
+@SqlResultSetMapping(
+        name = "intervalReportMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = IntervalReport.class,
+                        columns = {
+                                @ColumnResult(name = "intervalNumber", type = Integer.class),
+                                @ColumnResult(name = "orderCount", type = Integer.class),
+                                @ColumnResult(name = "productsOrdered", type = Integer.class),
+                                @ColumnResult(name = "servicesOrdered", type = Integer.class),
+                                @ColumnResult(name = "totalRevenue", type = Double.class),
+                                @ColumnResult(name = "productRevenue", type = Double.class),
+                                @ColumnResult(name = "serviceRevenue", type = Double.class),
+                                @ColumnResult(name = "discountAmount", type = Double.class),
+                                @ColumnResult(name = "deliveriesSuccess", type = Integer.class),
+                                @ColumnResult(name = "deliveriesFailed", type = Integer.class),
+                                @ColumnResult(name = "meanDeliveryHours", type = Double.class),
+                                @ColumnResult(name = "meanPendingHours", type = Double.class),
+                        }
+                )
+        }
+)
+
+@SqlResultSetMapping(
+        name = "overviewReportMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = OverviewReport.class,
+                        columns = {
+                                @ColumnResult(name = "totalRevenue", type = Double.class),
+                                @ColumnResult(name = "productsSold", type = Integer.class),
+                                @ColumnResult(name = "servicesSold", type = Integer.class),
+                                @ColumnResult(name = "customerCount", type = Integer.class),
+                        }
+                )
+        }
+)
+
 
 @Data
 @Entity

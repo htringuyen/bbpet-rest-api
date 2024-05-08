@@ -9,6 +9,35 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
+
+@NamedNativeQueries({
+        @NamedNativeQuery(name = "getDeliverablesToProcess", query = """
+                EXEC getDeliverablesToProcess :fromTime, :toTime, :fromPrice, :toPrice, :searchColumn,
+                                            :searchValue, :sortColumn, :sortOrder
+                """, resultSetMapping = "deliverableMapping"),
+})
+
+@SqlResultSetMapping(
+        name = "deliverableMapping",
+        classes = {
+                @ConstructorResult(
+                        targetClass = Deliverable.class,
+                        columns = {
+                                @ColumnResult(name = "orderId", type = Long.class),
+                                @ColumnResult(name = "itemType", type = String.class),
+                                @ColumnResult(name = "orderItemIds", type = String.class),
+                                @ColumnResult(name = "totalPrice", type = Double.class),
+                                @ColumnResult(name = "createdTime", type = LocalDateTime.class),
+                                @ColumnResult(name = "customerName", type = String.class),
+                                @ColumnResult(name = "address", type = String.class),
+                                @ColumnResult(name = "phoneNumber", type = String.class),
+                                @ColumnResult(name = "deliveryStatus", type = String.class),
+                                @ColumnResult(name = "sourceLocation", type = String.class),
+                        }
+                )
+        }
+)
+
 @Data
 @Entity
 @Table(name = "Delivery")
@@ -39,7 +68,7 @@ public class Delivery {
     /**
      * Status of Delivery and the flow of status
      */
-    enum Status implements Staging<Status> {
+    public enum Status implements Staging<Status> {
 
         PENDING(1, false, true),
 

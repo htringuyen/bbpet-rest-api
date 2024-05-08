@@ -3,12 +3,12 @@ USE bbpet;
 GO
 
 
-CREATE FUNCTION getBusinessReport(
-    @hourInterval INT = 24,
+CREATE FUNCTION getReportByIntervals(
+    @intervalHours INT = 24,
     @fromTime DATETIME = '1970-01-01T00:00:00',
     @toTime DATETIME = '2050-01-01T00:30:00'
 )
-RETURNS @Summary TABLE (
+RETURNS @Report TABLE (
    intervalNumber INT,
    orderCount INT,
    productsOrdered INT,
@@ -18,7 +18,7 @@ RETURNS @Summary TABLE (
    serviceRevenue DECIMAL(20, 2),
    discountAmount DECIMAL(20, 2),
    deliveriesSuccess INT,
-   deliveryFailed INT,
+   deliveriesFailed INT,
    meanDeliveryHours DECIMAL(20, 2),
    meanPendingHours DECIMAL(20, 2)
 )
@@ -27,7 +27,7 @@ BEGIN
 
     -- Check if @CustomerList is null and populate it with all customer IDs if it is
     DECLARE @batchSize INT;
-    SET @batchSize = IIF(50 * 24 / @hourInterval >= 1, 50 * 24 / @hourInterval, 1);
+    SET @batchSize = IIF(50 * 24 / @intervalHours >= 1, 50 * 24 / @intervalHours, 1);
 
     DECLARE @orderId INT, @orderTime DATETIME, @orderStatus VARCHAR;
 
@@ -59,7 +59,7 @@ BEGIN
 
 
     DECLARE @chunkNumber INT = 1;
-    DECLARE @intervalNumber INT = FLOOR(DATEDIFF_BIG(SECOND, @fromTime, @orderTime) / 3600.0 / @hourInterval);
+    DECLARE @intervalNumber INT = FLOOR(DATEDIFF_BIG(SECOND, @fromTime, @orderTime) / 3600.0 / @intervalHours);
 
     INSERT INTO @BatchData (intervalNumber, orderId, orderTime, orderStatus)
     VALUES (@intervalNumber, @orderId, @orderTime, @orderStatus)
@@ -69,7 +69,7 @@ BEGIN
         FETCH NEXT FROM OrderCursor
             INTO @orderId, @orderTime, @orderStatus;
 
-        DECLARE @nextIntervalNumber INT = FLOOR(DATEDIFF_BIG(SECOND, @fromTime, @orderTime) / 3600.0 / @hourInterval);
+        DECLARE @nextIntervalNumber INT = FLOOR(DATEDIFF_BIG(SECOND, @fromTime, @orderTime) / 3600.0 / @intervalHours);
 
         IF (@nextIntervalNumber > @intervalNumber)
             BEGIN
@@ -82,16 +82,16 @@ BEGIN
                 -- print process batch with chunk number
                 -- PRINT 'Processing batch of ' + CAST(@chunkNumber - 1 AS VARCHAR) + ' chunks';
 
-                INSERT INTO @Summary(intervalNumber, orderCount, productsOrdered, servicesOrdered, totalRevenue, productRevenue,
-                                     serviceRevenue, discountAmount, deliveriesSuccess, deliveryFailed, meanDeliveryHours, meanPendingHours)
+                INSERT INTO @Report(intervalNumber, orderCount, productsOrdered, servicesOrdered, totalRevenue, productRevenue,
+                                     serviceRevenue, discountAmount, deliveriesSuccess, deliveriesFailed, meanDeliveryHours, meanPendingHours)
                 SELECT
                     BD.intervalNumber as intervalNumber,
                     COUNT(DISTINCT BD.orderId)                          as orderCount,
                     SUM(IIF(OI.type = 'PRODUCT', OI.quantity, 0))       as productsOrdered,
                     SUM(IIF(OI.type = 'SERVICE', OI.quantity, 0))       as servicesOrdered,
-                    SUM(OI.quantity * OI.priceEach * (1 - OI.discount)) as totalRevenue,
-                    SUM(IIF(OI.type = 'PRODUCT', OI.quantity * OI.priceEach * (1 - OI.discount), 0)) as productRevenue,
-                    SUM(IIF(OI.type = 'SERVICE', OI.quantity * OI.priceEach * (1 - OI.discount), 0)) as serviceRevenue,
+                    SUM(IIF(BD.orderStatus = 'SUCCESS', OI.quantity * OI.priceEach * (1 - OI.discount), 0)) as totalRevenue,
+                    SUM(IIF(OI.type = 'PRODUCT' AND BD.orderStatus = 'SUCCESS', OI.quantity * OI.priceEach * (1 - OI.discount), 0)) as productRevenue,
+                    SUM(IIF(OI.type = 'SERVICE' AND BD.orderStatus = 'SUCCESS', OI.quantity * OI.priceEach * (1 - OI.discount), 0)) as serviceRevenue,
                     SUM(OI.quantity * OI.priceEach * OI.discount)       as discountAmount,
                     SUM(IIF(DL.status = 'SUCCESS', 1, 0))                  as deliveriesSuccess,
                     SUM(IIF(DL.status = 'FAILED', 1, 0))                   as deliveriesFailed,

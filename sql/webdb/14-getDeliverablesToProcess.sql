@@ -1,14 +1,17 @@
 USE bbpet;
 GO;
 
-CREATE PROCEDURE getDeliverablesToProcess @fromTime DATETIME, @toTime DATETIME,
-                                          @fromPrice DECIMAL(10, 2), @toPrice DECIMAL(10, 2)
+CREATE PROCEDURE getDeliverablesToProcess
+    @fromTime DATETIME = '2020-01-01T00:00:00',
+    @toTime DATETIME = '2050-01-01T00:00:00',
+    @fromPrice DECIMAL(20, 2) = 0.00,
+    @toPrice DECIMAL(20, 2) = 999999.00,
+    @searchColumn VARCHAR(255) = 'N/A',
+    @searchValue VARCHAR(255) = 'N/A',
+    @sortColumn VARCHAR(255) = 'createdTime',
+    @sortOrder VARCHAR(255) = 'DESC'
 AS
 BEGIN
-    SET @fromTime = ISNULL(@fromTime, '1970-01-01T00:00:00');
-    SET @toTime = ISNULL(@toTime, '2050-01-01T00:00:00');
-    SET @fromPrice = ISNULL(@fromPrice, 0.00);
-    SET @toPrice = ISNULL(@toPrice, 999999.00);
 
     WITH OrderItemInfo AS (
         SELECT
@@ -81,7 +84,60 @@ BEGIN
                  OII.shopItemId
              HAVING
                  SUM(OII.quantity * OII.priceEach * (1 - OII.discount)) BETWEEN @fromPrice AND @toPrice
-
          ) AS Result
-    ORDER BY createdTime , orderId
+
+    WHERE
+        CASE @searchColumn
+            WHEN 'orderId' THEN CAST(orderId AS VARCHAR(255))
+            WHEN 'itemType' THEN itemType
+            WHEN 'totalPrice' THEN CAST(totalPrice AS VARCHAR(255))
+            WHEN 'createdTime' THEN CAST(createdTime AS VARCHAR(255))
+            WHEN 'customerName' THEN customerName
+            WHEN 'address' THEN address
+            WHEN 'phoneNumber' THEN phoneNumber
+            WHEN 'deliveryStatus' THEN deliveryStatus
+            WHEN 'sourceLocation' THEN sourceLocation
+            ELSE 'N/A'
+            END LIKE '%' + @searchValue + '%'
+
+    ORDER BY
+        CASE WHEN @sortColumn = 'orderId' AND @sortOrder = 'ASC' THEN orderId END ASC,
+        CASE WHEN @sortColumn = 'orderId' AND @sortOrder = 'DESC' THEN orderId END DESC,
+
+        CASE WHEN @sortColumn = 'itemType' AND @sortOrder = 'ASC' THEN itemType END ASC,
+        CASE WHEN @sortColumn = 'itemType' AND @sortOrder = 'DESC' THEN itemType END DESC,
+
+        CASE WHEN @sortColumn = 'totalPrice' AND @sortOrder = 'ASC' THEN totalPrice END ASC,
+        CASE WHEN @sortColumn = 'totalPrice' AND @sortOrder = 'DESC' THEN totalPrice END DESC,
+
+        CASE WHEN @sortColumn = 'createdTime' AND @sortOrder = 'ASC' THEN createdTime END ASC,
+        CASE WHEN @sortColumn = 'createdTime' AND @sortOrder = 'DESC' THEN createdTime END DESC,
+
+        CASE WHEN @sortColumn = 'customerName' AND @sortOrder = 'ASC' THEN customerName END ASC,
+        CASE WHEN @sortColumn = 'customerName' AND @sortOrder = 'DESC' THEN customerName END DESC,
+
+        CASE WHEN @sortColumn = 'address' AND @sortOrder = 'ASC' THEN address END ASC,
+        CASE WHEN @sortColumn = 'address' AND @sortOrder = 'DESC' THEN address END DESC,
+
+        CASE WHEN @sortColumn = 'phoneNumber' AND @sortOrder = 'ASC' THEN phoneNumber END ASC,
+        CASE WHEN @sortColumn = 'phoneNumber' AND @sortOrder = 'DESC' THEN phoneNumber END DESC,
+
+        CASE WHEN @sortColumn = 'deliveryStatus' AND @sortOrder = 'ASC' THEN deliveryStatus END ASC,
+        CASE WHEN @sortColumn = 'deliveryStatus' AND @sortOrder = 'DESC' THEN deliveryStatus END DESC,
+
+        CASE WHEN @sortColumn = 'sourceLocation' AND @sortOrder = 'ASC' THEN sourceLocation END ASC,
+        CASE WHEN @sortColumn = 'sourceLocation' AND @sortOrder = 'DESC' THEN sourceLocation END DESC
 END
+go
+
+
+
+
+
+
+
+
+
+
+
+
