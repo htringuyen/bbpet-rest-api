@@ -11,7 +11,7 @@ import lombok.Data;
 @Table(name = "ShopItem")
 public class ShopItem {
 
-    enum Type {
+    public enum Type {
         PRODUCT,
         SERVICE
     }

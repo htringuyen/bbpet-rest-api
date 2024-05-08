@@ -1,5 +1,8 @@
 package com.bbpet.webapi.config;
 
+import com.bbpet.webapi.domain.report.IntervalReport;
+import com.bbpet.webapi.domain.report.OverviewReport;
+import jakarta.persistence.*;
 import org.hibernate.cfg.Environment;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,8 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
+
+
 
 @Import(BasicDatasourceCfg.class)
 @Configuration
