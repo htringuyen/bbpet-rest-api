@@ -1,3 +1,6 @@
+USE bbpet;
+GO
+
 CREATE PROCEDURE getDeliverablesToProcess
     @fromTime DATETIME = '1970-01-01T00:00:00',
     @toTime DATETIME = '2050-01-01T00:00:00',
