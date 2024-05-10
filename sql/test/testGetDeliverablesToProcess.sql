@@ -1,14 +1,3 @@
-/*var fromTime = LocalDateTime.of(2022, 1, 1, 0, 0, 0);
-var toTime = LocalDateTime.of(2023, 1, 1, 0, 0, 0);
-var fromPrice = 0.0;
-var toPrice = 500.0;
-var searchColumn = "customerName";
-var searchValue = "John";
-var orderColumn = "address";
-var order = "ASC";
-var page = 0;
-var size = Integer.MAX_VALUE;*/
-
 -- set test param as above
 DECLARE
     @fromTime DATETIME = '2022-01-01T00:00:00',

@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.time.LocalDateTime;
@@ -37,6 +39,19 @@ public class ReportServiceTest {
         var report = reportService.getOverviewReport();
         assertNotNull(report);
         LOGGER.info(report.toString());
+    }
+
+    @Test
+    void testGetShoppingReports() {
+        var searchColumn = "N/A";
+        var searchValue = "N/A";
+
+        var pageable = PageRequest.of(0, 1000, Sort.by(Sort.Order.asc("customerId")));
+
+        var page = reportService.getShoppingReports(searchColumn, searchValue, pageable);
+
+        assertEquals(500, page.getContent().size());
+        page.getContent().forEach(o -> LOGGER.info(o.toString()));
     }
 }
 
